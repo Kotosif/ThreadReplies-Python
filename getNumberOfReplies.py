@@ -8,6 +8,9 @@ import win32gui
 import win32api
 from threading import Thread
 import re
+from pushover import init, Client
+from dotenv import load_dotenv
+from os import getenv
 
 def mBox(title, text):
     #create a message box with topmost style
@@ -76,7 +79,13 @@ def checkThreadPostCount(parsed_json):
     else:
         print("Not over limit yet")
 
-def signupChecker(parsed_json, seen_posts, checkpoint):
+def delayAndroidPushNotifications():
+    global startup_delay_passed
+    sleep(300)
+    startup_delay_passed = True
+
+def signupChecker(parsed_json, seen_posts, checkpoint, client):
+    global startup_delay_passed
     # Collate the number of requests each post has
     posts = parsed_json["posts"][checkpoint:] # Start from a checkpoint
     reply_counter = {}
@@ -89,7 +98,13 @@ def signupChecker(parsed_json, seen_posts, checkpoint):
                     reply_counter[match].append(post["no"])
                     if len(reply_counter[match]) > 2 and not match in seen_posts:
                         seen_posts.append(match)
-                        displayMessageBox(title="WWD Signup Alert", content=("Post number %s potentially a signup request" % match))
+                        title = "WWD Signup Alert"
+                        content = "Post number %s potentially a signup request" % match
+                        displayMessageBox(title=title, content=content)
+                        if startup_delay_passed and not client is None:
+                            # Send push notification
+                            client.send_message(content, title=title)
+
                 else:
                     reply_counter[match] = [post["no"]]
     # print(seen_posts)
@@ -97,6 +112,7 @@ def signupChecker(parsed_json, seen_posts, checkpoint):
         
 
 #Main
+load_dotenv()
 LIMIT = 495
 filename = "url.txt"
 logfilename = "log.txt"
@@ -112,12 +128,26 @@ url = convertURL(url)
 seen_posts = []
 checkpoint = 1 # 1 to ignore OP post
 
+startup_delay_passed = False
+
+startup_delay_thread = Thread(target=delayAndroidPushNotifications, args=())
+startup_delay_thread.daemon = True
+startup_delay_thread.start()
+
+# Initialise Pushover Client
+client = None
+try:
+    client = Client(getenv("USER_KEY"), api_token=getenv("API_TOKEN"), device=getenv("DEVICE"))
+    print("Pushover client initialised successfully")
+except:
+    logging.exception("An exception occured. Stack trace below")
+
 while True:
     try:
         response = requests.get(url)
         parsed_json = json.loads(response.text)
         checkThreadPostCount(parsed_json)
-        checkpoint = signupChecker(parsed_json, seen_posts, checkpoint)
+        checkpoint = signupChecker(parsed_json, seen_posts, checkpoint, client)
         sleep(10)
     except Exception:
         # The stack trace and exception will get captured and printed
