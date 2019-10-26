@@ -67,15 +67,17 @@ def displayMessageBox(title, content):
     sleep(0.5)
     window = getWindow(title)
     moveMessageBoxToActiveWindow(window, monitorID, getMonitors())
-    t1.join()
+    return t1
 
 def checkThreadPostCount(parsed_json):
+    global thread_limit_reached_message_displayed
     number = parsed_json["posts"][0]["replies"]
     intNum = int(number)
     print( intNum )
     if intNum > LIMIT:
-        displayMessageBox(title="WWD Postcount Alert", content=("Post count is more than %d" % LIMIT))
-        sys.exit()
+        t1 = displayMessageBox(title="WWD Postcount Alert", content=("Post count is more than %d" % LIMIT))
+        t1.join()
+        thread_limit_reached_message_displayed = True
     else:
         print("Not over limit yet")
 
@@ -100,7 +102,7 @@ def signupChecker(parsed_json, seen_posts, checkpoint, client):
                         seen_posts.append(match)
                         title = "WWD Signup Alert"
                         content = "Post number %s potentially a signup request" % match
-                        displayMessageBox(title=title, content=content)
+                        t1 = displayMessageBox(title=title, content=content)
                         if startup_delay_passed and not client is None:
                             # Send push notification
                             client.send_message(content, title=title)
@@ -129,6 +131,7 @@ seen_posts = []
 checkpoint = 1 # 1 to ignore OP post
 
 startup_delay_passed = False
+thread_limit_reached_message_displayed = False
 
 startup_delay_thread = Thread(target=delayAndroidPushNotifications, args=())
 startup_delay_thread.daemon = True
@@ -146,7 +149,8 @@ while True:
     try:
         response = requests.get(url)
         parsed_json = json.loads(response.text)
-        checkThreadPostCount(parsed_json)
+        if not thread_limit_reached_message_displayed:
+            checkThreadPostCount(parsed_json)
         checkpoint = signupChecker(parsed_json, seen_posts, checkpoint, client)
         sleep(10)
     except Exception:
