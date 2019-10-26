@@ -50,7 +50,7 @@ def getActiveMonitor():
             MONITOR_DEFAULTTONEAREST)
     return monitorID
 
-def moveMessageBoxToActiveWindow(windowHwnd, monitorID, monitors):
+def moveMessageBoxToActiveMonitor(windowHwnd, monitorID, monitors):
     width = 350
     height = 150
     for monitor in monitors:
@@ -66,7 +66,7 @@ def displayMessageBox(title, content):
     t1.start()
     sleep(0.5)
     window = getWindow(title)
-    moveMessageBoxToActiveWindow(window, monitorID, getMonitors())
+    moveMessageBoxToActiveMonitor(window, monitorID, getMonitors())
     return t1
 
 def checkThreadPostCount(parsed_json):
