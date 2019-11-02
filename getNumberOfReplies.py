@@ -25,7 +25,7 @@ def convertURL(text):
     return url
 
 def windowEnumerationCallback(hwnd, lparam):
-    lparam.append((hwnd, win32gui.GetWindowText(hwnd)))
+    lparam.append((hwnd, win32gui.GetWindowText(hwnd), win32gui.GetWindowRect(hwnd)))
 
 def getWindow(title):
     results = []
@@ -33,7 +33,7 @@ def getWindow(title):
     win32gui.EnumWindows(windowEnumerationCallback, windows)
     for window in windows:
         if title in window[1]:
-            return window[0]
+            return (window[0], window[2])
     return None
 
 def getMonitors():
@@ -50,9 +50,9 @@ def getActiveMonitor():
             MONITOR_DEFAULTTONEAREST)
     return monitorID
 
-def moveMessageBoxToActiveMonitor(windowHwnd, monitorID, monitors):
-    width = 350
-    height = 150
+def moveMessageBoxToActiveMonitor(windowHwnd, monitorID, monitors, windowRectangle):
+    width = windowRectangle[2] - windowRectangle[0]
+    height = windowRectangle[3] - windowRectangle[1]
     for monitor in monitors:
         if monitor[0].__int__() == monitorID:
             xMin, yMin, xMax, yMax = monitor[2]
@@ -65,8 +65,8 @@ def displayMessageBox(title, content):
     t1 = Thread(target=mBox, args = (title, content))
     t1.start()
     sleep(0.5)
-    window = getWindow(title)
-    moveMessageBoxToActiveMonitor(window, monitorID, getMonitors())
+    window, windowRectangle = getWindow(title)
+    moveMessageBoxToActiveMonitor(window, monitorID, getMonitors(), windowRectangle)
     return t1
 
 def checkThreadPostCount(parsed_json):
@@ -101,12 +101,12 @@ def signupChecker(parsed_json, seen_posts, checkpoint, client):
                     if len(reply_counter[match]) > 2 and not match in seen_posts:
                         seen_posts.append(match)
                         if startup_delay_passed:
-                        title = "WWD Signup Alert"
+                            title = "WWD Signup Alert"
                             content = "Post number %s potentially a signup request\nPost:\n%s" % (match, comment)
-                        t1 = displayMessageBox(title=title, content=content)
+                            t1 = displayMessageBox(title=title, content=content)
                             if not client is None:
-                            # Send push notification
-                            client.send_message(content, title=title)
+                                # Send push notification
+                                client.send_message(content, title=title)
 
                 else:
                     reply_counter[match] = [post["no"]]
