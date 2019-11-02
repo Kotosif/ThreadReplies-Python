@@ -100,10 +100,11 @@ def signupChecker(parsed_json, seen_posts, checkpoint, client):
                     reply_counter[match].append(post["no"])
                     if len(reply_counter[match]) > 2 and not match in seen_posts:
                         seen_posts.append(match)
+                        if startup_delay_passed:
                         title = "WWD Signup Alert"
-                        content = "Post number %s potentially a signup request" % match
+                            content = "Post number %s potentially a signup request\nPost:\n%s" % (match, comment)
                         t1 = displayMessageBox(title=title, content=content)
-                        if startup_delay_passed and not client is None:
+                            if not client is None:
                             # Send push notification
                             client.send_message(content, title=title)
 
