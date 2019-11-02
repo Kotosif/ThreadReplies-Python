@@ -11,6 +11,7 @@ import re
 from pushover import init, Client
 from dotenv import load_dotenv
 from os import getenv
+from html2text import html2text
 
 def mBox(title, text):
     #create a message box with topmost style
@@ -102,7 +103,7 @@ def signupChecker(parsed_json, seen_posts, checkpoint, client):
                         seen_posts.append(match)
                         if startup_delay_passed:
                             title = "WWD Signup Alert"
-                            content = "Post number %s potentially a signup request\nPost:\n%s" % (match, comment)
+                            content = "Post number %s potentially a signup request\nPost:\n%s" % (match, html2text(comment))
                             t1 = displayMessageBox(title=title, content=content)
                             if not client is None:
                                 # Send push notification
