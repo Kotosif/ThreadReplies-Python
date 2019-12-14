@@ -70,14 +70,19 @@ def displayMessageBox(title, content):
     moveMessageBoxToActiveMonitor(window, monitorID, getMonitors(), windowRectangle)
     return t1
 
-def checkThreadPostCount(parsed_json):
+def checkThreadPostCount(parsed_json, client):
     global thread_limit_reached_message_displayed
     number = parsed_json["posts"][0]["replies"]
     intNum = int(number)
     print( intNum )
     if intNum > LIMIT:
-        t1 = displayMessageBox(title="WWD Postcount Alert", content=("Post count is more than %d" % LIMIT))
+        title = "WWD Postcount Alert"
+        content = ("Post count is more than %d" % LIMIT)
+        t1 = displayMessageBox(title=title, content=content)
         t1.join()
+        if not client is None:
+            # Send push notification
+            client.send_message(content, title=title)
         thread_limit_reached_message_displayed = True
     else:
         print("Not over limit yet")
@@ -86,6 +91,25 @@ def delayAndroidPushNotifications():
     global startup_delay_passed
     sleep(300)
     startup_delay_passed = True
+
+def searchPostByNo(posts, no):
+    for post in posts:
+        if post['no'] == no:
+            return post
+
+def containsPhrases(phrases, comment):
+    for phrase in phrases:
+        if len(re.findall(phrase, comment)) > 0:
+            return True
+    return False
+
+def containsSignUpPhrases(comment):
+    signup_phrases = [r"(w|W)ho (wants|up) ", r"I'll pick one", r"link ref", r"Waifu \+ .+\?"]
+    return containsPhrases(signup_phrases, comment)
+
+def excludesPhrases(comment):
+    exclude_phrases = [r"^(p|P)ost "]
+    return not containsPhrases(exclude_phrases, comment)
 
 def signupChecker(parsed_json, seen_posts, checkpoint, client):
     global startup_delay_passed
@@ -98,19 +122,25 @@ def signupChecker(parsed_json, seen_posts, checkpoint, client):
             matches = re.findall(r"#p(\d+)\"", comment)
             for match in matches:
                 if match in reply_counter:
-                    reply_counter[match].append(post["no"])
-                    if len(reply_counter[match]) > 2 and not match in seen_posts:
+                    reply_counter[match]['replies'].append(post["no"])
+                    if not match in seen_posts and ((len(reply_counter[match]['replies']) > 0 and containsSignUpPhrases(comment)) or \
+                    (len(reply_counter[match]['replies']) > 2 and excludesPhrases(comment))):
                         seen_posts.append(match)
                         if startup_delay_passed:
                             title = "WWD Signup Alert"
-                            content = "Post number %s potentially a signup request\nPost:\n%s" % (match, html2text(comment))
+                            content = "Post number %s potentially a signup request\nPost:\n%s" % (match, html2text(reply_counter[match]['comment']))
                             t1 = displayMessageBox(title=title, content=content)
                             if not client is None:
                                 # Send push notification
                                 client.send_message(content, title=title)
-
                 else:
-                    reply_counter[match] = [post["no"]]
+                    parentPost = searchPostByNo(parsed_json["posts"], int(match))
+                    if not parentPost is None:
+                        parentComment = ""
+                        if 'com' in parentPost:
+                            parentComment = parentPost['com']
+                        reply_counter[match] = {'comment': parentComment, 'replies': []}
+                        reply_counter[match]['replies'].append(post["no"])
     # print(seen_posts)
     return max(parsed_json["posts"][0]["replies"] - 5, 1)
         
@@ -152,7 +182,7 @@ while True:
         response = requests.get(url)
         parsed_json = json.loads(response.text)
         if not thread_limit_reached_message_displayed:
-            checkThreadPostCount(parsed_json)
+            checkThreadPostCount(parsed_json, client)
         checkpoint = signupChecker(parsed_json, seen_posts, checkpoint, client)
         sleep(10)
     except Exception:
