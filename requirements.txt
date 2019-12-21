@@ -1,0 +1,7 @@
+requests
+pywin32
+setuptools
+python-pushover
+python-dotenv
+html2text
+

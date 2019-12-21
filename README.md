@@ -1,9 +1,9 @@
 ## Requirements
 
-pip install these modules:
+pip install -r requirements.txt
 
-- requests
-- pywin32
-- setuptools
-- python-pushover
-- python-dotenv
+Create environmental variables for Pushover client:
+
+- USER_KEY
+- API_TOKEN
+- DEVICE

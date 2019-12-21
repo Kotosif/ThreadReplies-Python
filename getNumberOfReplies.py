@@ -21,7 +21,7 @@ def mBox(title, text):
 def convertURL(text):
     if (text.endswith('json')):
             return text
-    tokens = text.split('/')
+    tokens = text.strip().split('/')
     url = "http://a.4cdn.org/a/thread/"+tokens[-1]+".json"
     return url
 
