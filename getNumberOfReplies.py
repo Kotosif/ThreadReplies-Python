@@ -74,7 +74,7 @@ def checkThreadPostCount(parsed_json, client):
     global thread_limit_reached_message_displayed
     number = parsed_json["posts"][0]["replies"]
     intNum = int(number)
-    print( intNum )
+    print(intNum)
     if intNum > LIMIT:
         title = "WWD Postcount Alert"
         content = ("Post count is more than %d" % LIMIT)
@@ -108,7 +108,7 @@ def containsSignUpPhrases(comment):
     return containsPhrases(signup_phrases, comment)
 
 def excludesPhrases(comment):
-    exclude_phrases = [r"^(p|P)ost "]
+    exclude_phrases = [r"^(p|P)ost ", r"(?i)wips?"]
     return not containsPhrases(exclude_phrases, comment)
 
 def signupChecker(parsed_json, seen_posts, checkpoint, client):
@@ -150,6 +150,7 @@ load_dotenv()
 LIMIT = 495
 filename = "url.txt"
 logfilename = "log.txt"
+SEND_PUSH_NOTIFICATIONS = False
 
 logfile = open(logfilename, 'w').close() # Clear log file
 logging.basicConfig(format='%(asctime)s %(message)s', filename=logfilename, 
@@ -171,11 +172,12 @@ startup_delay_thread.start()
 
 # Initialise Pushover Client
 client = None
-try:
-    client = Client(getenv("USER_KEY"), api_token=getenv("API_TOKEN"), device=getenv("DEVICE"))
-    print("Pushover client initialised successfully")
-except:
-    logging.exception("An exception occured. Stack trace below")
+if SEND_PUSH_NOTIFICATIONS:
+    try:
+        client = Client(getenv("USER_KEY"), api_token=getenv("API_TOKEN"), device=getenv("DEVICE"))
+        print("Pushover client initialised successfully")
+    except:
+        logging.exception("An exception occured. Stack trace below")
 
 while True:
     try:
