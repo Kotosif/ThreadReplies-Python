@@ -1,0 +1,54 @@
+{
+   "testExcludedPhrases": {
+      "posts": [
+         {
+            "no": 202789975,
+            "name": "Anonymous",
+            "sub": "Test thread",
+            "replies": 4
+         },
+         {
+            "no": 202789983,
+            "com": "Post waifu doing something."
+         },
+         {
+            "no": 202790021,
+            "com": "<a href=\"#p202789983\" class=\"quotelink\">&gt;&gt;202789983</a><br>This is a reply"
+         },
+         {
+            "no": 202790048,
+            "com": "<a href=\"#p202789983\" class=\"quotelink\">&gt;&gt;202789983</a><br>This is a reply"
+         },
+         {
+            "no": 202790058,
+            "com": "<a href=\"#p202789983\" class=\"quotelink\">&gt;&gt;202789983</a><br>This is a reply"
+         }
+      ]
+   },
+   "testSignUpCheckerDefault": {
+      "posts": [
+         {
+            "no": 202789975,
+            "name": "Anonymous",
+            "sub": "Test thread",
+            "replies": 4
+         },
+         {
+            "no": 202789983,
+            "com": "Nothing special parent post"
+         },
+         {
+            "no": 202790021,
+            "com": "<a href=\"#p202789983\" class=\"quotelink\">&gt;&gt;202789983</a><br>This is a reply"
+         },
+         {
+            "no": 202790048,
+            "com": "<a href=\"#p202789983\" class=\"quotelink\">&gt;&gt;202789983</a><br>This is a reply"
+         },
+         {
+            "no": 202790058,
+            "com": "<a href=\"#p202789983\" class=\"quotelink\">&gt;&gt;202789983</a><br>This is a reply"
+         }
+      ]
+   }
+}
