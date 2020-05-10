@@ -63,6 +63,10 @@ def excludesPhrases(comment):
     exclude_phrases = [r"^(p|P)ost ", r"(?i)wips?"]
     return not containsPhrases(exclude_phrases, comment)
 
+def notADelivery(parentPostNumber, parentComment):
+    match = re.search(r"#p(\d+)\"", parentComment)
+    return False if match else True
+
 def signupChecker(startup_delay_passed, parsed_json, seen_posts, checkpoint, client, messageBox):
     # Collate the number of requests each post has
     posts = parsed_json["posts"][checkpoint:] # Start from a checkpoint
@@ -76,7 +80,7 @@ def signupChecker(startup_delay_passed, parsed_json, seen_posts, checkpoint, cli
                     reply_counter[match]['replies'].append(post["no"])
                     parentComment = reply_counter[match]['comment']
                     if not match in seen_posts and ((len(reply_counter[match]['replies']) > 0 and containsSignUpPhrases(parentComment)) or \
-                    (len(reply_counter[match]['replies']) > 2 and excludesPhrases(parentComment))):
+                    (len(reply_counter[match]['replies']) > 2 and excludesPhrases(parentComment) and notADelivery(match, parentComment))):
                         seen_posts.append(match)
                         if startup_delay_passed:
                             title = "WWD Signup Alert"

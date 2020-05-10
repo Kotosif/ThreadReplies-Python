@@ -24,5 +24,9 @@ class Tests(unittest.TestCase):
         getNumberOfReplies.signupChecker(True, self.parsed_json["testSignUpCheckerDefault"], [], 1, None, self.messageBoxMock)
         self.messageBoxMock.displayMessageBox.assert_called()
 
+    def testExcludesDeliveries(self):
+        getNumberOfReplies.signupChecker(True, self.parsed_json["testExcludesDeliveries"], [], 1, None, self.messageBoxMock)
+        self.messageBoxMock.displayMessageBox.assert_not_called()
+
 if __name__ == '__main__':
     unittest.main()

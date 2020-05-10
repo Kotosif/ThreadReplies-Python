@@ -19,7 +19,7 @@ class MessageBox:
     def getWindow(self, title):
         results = []
         windows = []
-        win32gui.EnumWindows(windowEnumerationCallback, windows)
+        win32gui.EnumWindows(self.windowEnumerationCallback, windows)
         for window in windows:
             if title in window[1]:
                 return (window[0], window[2])
@@ -50,10 +50,10 @@ class MessageBox:
                 ctypes.windll.user32.MoveWindow(windowHwnd, xMid - width//2, yMid - height//2, width, height, True)
 
     def displayMessageBox(self, title, content):
-        monitorID = getActiveMonitor()
-        t1 = Thread(target=mBox, args = (title, content))
+        monitorID = self.getActiveMonitor()
+        t1 = Thread(target=self.mBox, args = (title, content))
         t1.start()
         sleep(0.5)
-        window, windowRectangle = getWindow(title)
-        moveMessageBoxToActiveMonitor(window, monitorID, getMonitors(), windowRectangle)
+        window, windowRectangle = self.getWindow(title)
+        self.moveMessageBoxToActiveMonitor(window, monitorID, self.getMonitors(), windowRectangle)
         return t1

@@ -76,5 +76,33 @@
             "com": "<a href=\"#p202789983\" class=\"quotelink\">&gt;&gt;202789983</a><br>This is a reply"
          }
       ]
+   },
+   "testExcludesDeliveries": {
+      "posts": [
+         {
+            "no": 202789975,
+            "name": "Anonymous",
+            "sub": "Test thread",
+            "replies": 4
+         },
+         {
+            "no": 202789983,
+            "com": "Some request",
+            "filename": "Some file"
+         },
+         {
+            "no": 202790021,
+            "com": "<a href=\"#p202789983\" class=\"quotelink\">&gt;&gt;202789983</a><br>Some delivery",
+            "filename": "Some image"
+         },
+         {
+            "no": 202790048,
+            "com": "<a href=\"#p202790021\" class=\"quotelink\">&gt;&gt;202790021</a><br>This is a reply"
+         },
+         {
+            "no": 202790058,
+            "com": "<a href=\"#p202790021\" class=\"quotelink\">&gt;&gt;202790021</a><br>This is a reply"
+         }
+      ]
    }
 }
