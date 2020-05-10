@@ -13,7 +13,11 @@ class Tests(unittest.TestCase):
         text.close()
 
     def testExcludedPhrases(self):
-        getNumberOfReplies.signupChecker(True, self.parsed_json["testExcludedPhrases"], [], 1, None, self.messageBoxMock)
+        getNumberOfReplies.signupChecker(True, self.parsed_json["testExcludedPhrases1"], [], 1, None, self.messageBoxMock)
+        self.messageBoxMock.displayMessageBox.assert_not_called()
+
+    def testExcludedPhrasesWhenParentIsAReply(self):
+        getNumberOfReplies.signupChecker(True, self.parsed_json["testExcludedPhrases2"], [], 1, None, self.messageBoxMock)
         self.messageBoxMock.displayMessageBox.assert_not_called()
 
     def testSignupCheckerDefault(self):

@@ -9,4 +9,10 @@ Create environmental variables for Pushover client:
 - DEVICE
 
 ## Running tests
-python -m unittest tests_cases.py
+
+### Running all tests
+
+`python testscases.py`
+
+### Running an individual test
+`python -m unittest testscases.Tests.testExcludedPhrasesWhenParentIsAReply`

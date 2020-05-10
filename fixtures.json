@@ -1,5 +1,5 @@
 {
-   "testExcludedPhrases": {
+   "testExcludedPhrases1": {
       "posts": [
          {
             "no": 202789975,
@@ -10,6 +10,32 @@
          {
             "no": 202789983,
             "com": "Post waifu doing something."
+         },
+         {
+            "no": 202790021,
+            "com": "<a href=\"#p202789983\" class=\"quotelink\">&gt;&gt;202789983</a><br>This is a reply"
+         },
+         {
+            "no": 202790048,
+            "com": "<a href=\"#p202789983\" class=\"quotelink\">&gt;&gt;202789983</a><br>This is a reply"
+         },
+         {
+            "no": 202790058,
+            "com": "<a href=\"#p202789983\" class=\"quotelink\">&gt;&gt;202789983</a><br>This is a reply"
+         }
+      ]
+   },
+   "testExcludedPhrases2": {
+      "posts": [
+         {
+            "no": 202789975,
+            "name": "Anonymous",
+            "sub": "Test thread",
+            "replies": 4
+         },
+         {
+            "no": 202789983,
+            "com": "<a href=\"#p202789975\" class=\"quotelink\">&gt;&gt;202789975</a><br>Post waifu doing something."
          },
          {
             "no": 202790021,

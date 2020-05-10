@@ -46,7 +46,7 @@ def searchPostByNo(posts, no):
             return post
 
 def stripReplyTags(comment):
-    return re.sub(r">>\d+(  |\n)", "", html2text(comment).strip())
+    return re.sub(r">>\d+(  |\n)*", "", html2text(comment).strip())
 
 def containsPhrases(phrases, comment):
     strippedComment = stripReplyTags(comment)
