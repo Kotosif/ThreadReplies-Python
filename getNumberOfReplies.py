@@ -37,7 +37,7 @@ def checkThreadPostCount(parsed_json, client, messageBox):
 
 def delaySignUpNotifications():
     global startup_delay_passed
-    sleep(300)
+    sleep(30)
     startup_delay_passed = True
 
 def searchPostByNo(posts, no):
@@ -56,7 +56,7 @@ def containsPhrases(phrases, comment):
     return False
 
 def containsSignUpPhrases(comment):
-    signup_phrases = [r"(w|W)ho (wants|up) ", r"I'll pick one", r"link ref", r"Waifu \+ .+\?"]
+    signup_phrases = [r"(w|W)ho (wants|up) ", r"I'll pick one", r"link ref", r"Waifu \+ .+\?", r"gimme"]
     return containsPhrases(signup_phrases, comment)
 
 def excludesPhrases(comment):
@@ -110,7 +110,7 @@ if __name__ == "__main__":
     LIMIT = 495
     filename = "url.txt"
     logfilename = "log.txt"
-    SEND_PUSH_NOTIFICATIONS = False
+    SEND_PUSH_NOTIFICATIONS = False 
 
     logfile = open(logfilename, 'w').close() # Clear log file
     logging.basicConfig(format='%(asctime)s %(message)s', filename=logfilename, 
